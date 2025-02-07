@@ -42,8 +42,8 @@ A modern job board built with Next.js 15(Latest version), TypeScript, and Tailwi
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/job-board.git
-cd job-board
+git clone https://github.com/danieloemenike/GlobalDeskJobs.git
+cd GlobalDeskJobs
 ```
 
 2. Install dependencies:
