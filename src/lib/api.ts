@@ -29,7 +29,7 @@ import { mockJobs } from './data/job';
     limit = 10
   }: FetchJobsParams = {}): Promise<PaginatedResponse<Job>> {
     // Simulate API delay
-    await delay(1000);
+    await delay(100);
   
     // Filter jobs based on search criteria
     const filteredJobs = mockJobs.filter(job => {

@@ -65,6 +65,19 @@ export function ApplicationForm({ onSuccess }: ApplicationFormProps) {
     },
   });
 
+  type FormValues = z.infer<typeof formSchema>;
+  
+  const {
+      formState: { isValid, dirtyFields }
+    } = form;
+  
+      // Check if all fields are dirty (have been touched/modified)
+      const allFieldsDirty = Object.keys(formSchema.shape).every(
+        (key) => dirtyFields[key as keyof FormValues]
+      );
+  
+      const isButtonDisabled = !isValid || !allFieldsDirty || isSubmitting;
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
       console.log(values);
       setIsSubmitting(true);
@@ -178,7 +191,7 @@ export function ApplicationForm({ onSuccess }: ApplicationFormProps) {
           <Button type="button" variant="outline" onClick={onSuccess}>
             Cancel
           </Button>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button type="submit" className="w-full"   disabled={isButtonDisabled} >
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -187,8 +200,14 @@ export function ApplicationForm({ onSuccess }: ApplicationFormProps) {
           ) : (
             'Submit Application'
                       ) }
-                          </Button>
+          </Button>
+         
         </div>
+        {!allFieldsDirty && (
+          <p className="text-sm text-muted-foreground text-center">
+            Please fill in all fields to submit
+          </p>
+        )}
       </form>
     </Form>
   );
