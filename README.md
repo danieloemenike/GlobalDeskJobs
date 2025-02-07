@@ -1,36 +1,145 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GlobalDesk - A Job Board Application
+
+A modern job board built with Next.js 15(Latest version), TypeScript, and Tailwind CSS. Features infinite scrolling, real-time search filtering, and a responsive design.
+
+![Job Board Preview](public/githubImages/dashDark.png "Global Desk Dashboard")
+
+![Job Board Preview](public/githubImages/dash1.png "Global Desk Dashboard")
+
+![Job Board Preview](public/githubImages/dash3.png "Global Desk Dashboard")
+
+## Features
+
+- 🔍 Real-time search with URL persistence
+- ♾️ Infinite scrolling for job listings
+- 🎨 Dark/Light mode support
+- 📱 Fully responsive design
+- 🔗 Shareable job listings with URL-based filters
+- 💾 Job bookmarking functionality
+- ⌨️ Full keyboard navigation support
+- ♿ Accessible components using shadcn/ui
+
+## Tech Stack
+
+- Next.js 15
+- TypeScript
+- Tailwind CSS
+- Zustand for state management
+- TanStack Query
+- shadcn/ui components
+- nuqs for URL state management
+- date-fns for date formatting
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20
+- pnpm (preferred) or yarn
+
+### Installation
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/job-board.git
+cd job-board
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Start the development server:
 
-## Learn More
+```bash
+pnpm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key Features Explained
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### URL-based Filtering
 
-## Deploy on Vercel
+The application uses `nuqs` for URL state management, allowing users to share their filtered job searches:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```typescript
+const [queryStates, setQueryStates] = useQueryStates({
+  search: parseAsString.withDefault(''),
+  location: parseAsString.withDefault(''),
+  minSalary: parseAsInteger.withDefault(0),
+  maxSalary: parseAsInteger.withDefault(500000),
+});
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Infinite Scrolling
+
+Implemented using TanStack Query and Intersection Observer:
+
+```typescript
+const { data, fetchNextPage, hasNextPage } = useJobsQuery({
+  search: queryStates.search,
+  // ... other filters
+});
+```
+
+### State Management
+
+Uses Zustand for global state management, particularly for saved jobs:
+
+```typescript
+export const useJobStore = create<JobStore>()(
+  persist(
+    (set) => ({
+      savedJobs: [],
+      toggleSavedJob: (jobId) => 
+        set((state) => ({
+          savedJobs: state.savedJobs.includes(jobId)
+            ? state.savedJobs.filter((id) => id !== jobId)
+            : [...state.savedJobs, jobId],
+        })),
+    }),
+    {
+      name: 'job-store',
+    }
+  )
+);
+```
+
+## Customization
+
+### Theme
+
+The application uses Tailwind CSS for styling. You can customize the theme in `tailwind.config.js`:
+
+```javascript
+theme: {
+  extend: {
+    colors: {
+      primary: { /* your colors */ },
+      // ... other customizations
+    },
+  },
+},
+```
+
+### Mock Data
+
+You can modify the mock jobs data in `lib/data/jobs.ts` to add or modify job listings.
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## Acknowledgments
+
+- [shadcn/ui](https://ui.shadcn.com/) for the ui component library
+- [TanStack Query](https://tanstack.com/query/latest) for data fetching
+- [Zustand](https://github.com/pmndrs/zustand) for state management
